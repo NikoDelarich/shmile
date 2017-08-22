@@ -20,7 +20,8 @@ DoubleImageCompositor = require("./lib/double_image_compositor")
 
 exp = express()
 web = http.createServer(exp)
-template = new Template({overlayImage: "/images/img_photobooth.png", photoView: 'PortraitOneByFour', compositor: new DoubleImageCompositor()})
+template = new Template({overlayImage: "/images/img_photobooth.png", photoView: 'SnapOneByFour', compositor: new DoubleImageCompositor()})
+# template = new Template({overlayImage: "/images/img_photobooth.png", photoView: 'PortraitOneByFour', compositor: new DoubleImageCompositor()})
 # template = new Template({overlayImage: "/images/overlay.png", photoView: 'LandscapeTwoByTwo', compositor: new ImageCompositor()})
 console.log("printer is: #{template.printerEnabled}")
 
