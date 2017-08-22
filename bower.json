@@ -19,6 +19,7 @@
     "tests"
   ],
   "dependencies": {
-    "shmile-ui": "simao/shmile-ui#539c848"
+    "shmile-ui": "simao/shmile-ui#539c848",
+    "snap.svg": "~0.5.1"
   }
 }
