@@ -10,8 +10,8 @@ class PiCameraControl
   constructor: (
     # @filename="%m-%y-%d_%H:%M:%S.jpg",
     @filename='YYYY-MM-DD_HH:mm:ss',
-    @cwd="/home/pi/shmile/public/photos",
-    @web_root_path="/photos") ->
+    @cwd="public/photos",
+    @web_root_path="photos") ->
 
   init: ->
     emitter = new EventEmitter()
@@ -19,10 +19,9 @@ class PiCameraControl
       now = moment()
       formatted = now.format(@filename)
       fname =  @cwd + "/" + formatted + ".jpg"
-      camera = new RaspiCam({mode: "photo", output: fname, op:20, t:200});
+      camera = new RaspiCam({mode: "photo", output: fname, op:20, t:200, w:1800, h:1200, q:90});
       emitter.emit "camera_begin_snap"
       camera.start( )
-
 
       # listen for the "start" event triggered when the start method has been successfully initiated
       camera.on "start", =>
