@@ -1,11 +1,3 @@
-# EventEmitter = require("events").EventEmitter
-# spawn = require("child_process").spawn
-# exec = require("child_process").exec
-
-# moment = require("moment")
-# RaspiCam = require("raspicam");
-# const fs = require("fs");
-
 ImageCompositor = require("./image_compositor")
 
 class Template

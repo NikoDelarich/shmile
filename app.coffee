@@ -6,24 +6,30 @@ yaml = require "yaml"
 dotenv = require "dotenv"
 exec = require("child_process").exec
 Q = require 'q'
+bodyParser = require('body-parser')
 
 dotenv.load()
+
+ShmileConfig = require("./lib/shmile_config")
 
 PhotoFileUtils = require("./lib/photo_file_utils")
 StubCameraControl = require("./lib/stub_camera_control")
 PiCameraControl = require("./lib/pi_camera_control")
-Template = require("./lib/template")
 
-ImageCompositor = require("./lib/image_compositor")
-DoubleImageCompositor = require("./lib/double_image_compositor")
-Landscape3x8Compositor = require("./lib/landscape_3x8_compositor")
+TemplateControl = require("./lib/template_control")
 
 exp = express()
 web = http.createServer(exp)
-#template = new Template({overlayImage: "/images/landscape3x8.png", photoView: 'LandscapeOneByThree', compositor: new Landscape3x8Compositor(), printerEnabled: true, printer: 'abc'})
-template = new Template({overlayImage: "/images/img_photobooth.png", photoView: 'PortraitOneByFour', compositor: new DoubleImageCompositor(), printerEnabled:true, printer: '-d dye -o fit-to-page -o PageSize=w288h432-div2 -o StpLaminate=Glossy'})
-# template = new Template({overlayImage: "/images/overlay.png", photoView: 'LandscapeTwoByTwo', compositor: new ImageCompositor()})
-console.log("printer is: #{template.printerEnabled}")
+urlEncodedParser = bodyParser.urlencoded({ extended: false })
+
+config = new ShmileConfig()
+
+# TODO: Global :/
+templateControl = new TemplateControl(config.currentTemplate)
+
+templateControl.setTemplate(config.currentTemplate)
+
+console.log("printer is: #{templateControl.printerEnabled}")
 
 exp.configure ->
   exp.set "views", __dirname + "/views"
@@ -44,20 +50,34 @@ exp.get "/gallery", (req, res) ->
     extra_css: [ "photoswipe/photoswipe" ]
     image_paths: PhotoFileUtils.composited_images(true)
 
+exp.post "/config", urlEncodedParser, (req, res) ->
+  console.log(req.body)
+  new_template = config.setTemplate(req.body.currentTemplate)
+  templateControl.setTemplate(new_template)
+  res.redirect("/")
+
+exp.get "/config", (req, res) ->
+  res.render "config",
+    title: "Config"
+    currentTemplate: config.currentTemplate
+    templates: templateControl.availableTemplates
+
 ccKlass = if process.env['STUB_CAMERA'] is "true" then StubCameraControl else PiCameraControl
 camera = new ccKlass().init()
 
 camera.on "photo_saved", (filename, path, web_url) ->
-  template.compositor.push path
+  # FIXME:
+  # template.compositor.image_src_list.push path
+  templateControl.template.compositor.push path
 
 io = require("socket.io").listen(web)
 web.listen 3000
 io.sockets.on "connection", (websocket) ->
   console.log "Web browser connected"
 
-  compositor = template.compositor.init();
+  compositor = templateControl.compositor.init()
 
-  websocket.emit "template", template
+  websocket.emit "template", templateControl.template
 
   camera.on "camera_begin_snap", ->
     websocket.emit "camera_begin_snap"
@@ -100,14 +120,14 @@ io.sockets.on "connection", (websocket) ->
     shouldPrintDefer = Q.defer()
     imageCompositedDefer = Q.defer()
 
-    if template.printerEnabled
+    if templateControl.printerEnabled
       console.log "The printer is enabled, showing message"
       websocket.emit "printer_enabled"
     else
       console.log "The printer is NOT enabled, proceeding to 'review_composited'"
       websocket.emit "review_composited"
 
-    compositor.emit "composite", template.overlayImage
+    compositor.emit "composite", templateControl.overlayImage
 
     Q.all([shouldPrintDefer.promise, imageCompositedDefer.promise]).then (value) ->
       # this part will run after all promises have finished
