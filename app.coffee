@@ -25,7 +25,7 @@ urlEncodedParser = bodyParser.urlencoded({ extended: false })
 config = new ShmileConfig()
 
 # TODO: Global :/
-templateControl = new TemplateControl(config.currentTemplate)
+templateControl = new TemplateControl(config)
 
 templateControl.setTemplate(config.currentTemplate)
 
@@ -75,7 +75,7 @@ web.listen 3000
 io.sockets.on "connection", (websocket) ->
   console.log "Web browser connected"
 
-  compositor = templateControl.compositor.init()
+  compositor = templateControl.template.compositor.init()
 
   websocket.emit "template", templateControl.template
 
@@ -111,7 +111,7 @@ io.sockets.on "connection", (websocket) ->
 
   compositor.on "composited", (output_file_path) ->
     console.log "Finished compositing image. Output image is at ", output_file_path
-    template.compositor.clearImages()
+    templateControl.template.compositor.clearImages()
     imageCompositedDefer.resolve output_file_path
 
     websocket.broadcast.emit "composited_image", PhotoFileUtils.photo_path_to_url(output_file_path)
@@ -120,14 +120,14 @@ io.sockets.on "connection", (websocket) ->
     shouldPrintDefer = Q.defer()
     imageCompositedDefer = Q.defer()
 
-    if templateControl.printerEnabled
+    if templateControl.template.printerEnabled
       console.log "The printer is enabled, showing message"
       websocket.emit "printer_enabled"
     else
       console.log "The printer is NOT enabled, proceeding to 'review_composited'"
       websocket.emit "review_composited"
 
-    compositor.emit "composite", templateControl.overlayImage
+    compositor.emit "composite", templateControl.template.overlayImage
 
     Q.all([shouldPrintDefer.promise, imageCompositedDefer.promise]).then (value) ->
       # this part will run after all promises have finished

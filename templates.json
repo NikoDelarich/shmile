@@ -1,0 +1,33 @@
+{
+  "LandscapeOneByThree":{
+    "name": "LandscapeOneByThree",
+    "overlayImage": "/images/landscape3x8.png",
+    "photoView": "LandscapeOneByThree",
+    "compositor": "Landscape3x8Compositor",
+    "printerEnabled": true,
+    "printer": "-d dye -o fit-to-page -o PageSize=w576h432 -o StpLaminate=Matte"
+  },
+  "PortraitOneByFour":{
+    "name": "PortraitOneByFour",
+    "overlayImage": "/images/img_photobooth.png",
+    "photoView": "PortraitOneByFour",
+    "compositor": "DoubleImageCompositor",
+    "printerEnabled":true,
+    "printer": "-d dye -o fit-to-page -o PageSize=w288h432-div2 -o StpLaminate=Matte"
+  },
+  "LandscapeTwoByTwo":{
+    "name": "LandscapeTwoByTwo",
+    "overlayImage": "/images/overlay.png",
+    "photoView": "LandscapeTwoByTwo",
+    "compositor": "ImageCompositor",
+    "printer": "-d dye -o fit-to-page -o PageSize=w288h432 -o StpLaminate=Matte"
+  },
+  "StripOneByThree":{
+    "name": "StripOneByThree",
+    "overlayImage": "/images/gustavo.png",
+    "photoView": "StripOneByThree",
+    "compositor": "StripOneByThreeCompositor",
+    "printerEnabled":true,
+    "printer": "-d dye -o fit-to-page -o PageSize=w288h432-div2 -o StpLaminate=Matte"
+  }
+}
