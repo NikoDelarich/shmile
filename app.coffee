@@ -22,7 +22,8 @@ exp = express()
 web = http.createServer(exp)
 urlEncodedParser = bodyParser.urlencoded({ extended: false })
 
-config = new ShmileConfig().config
+shmileConfig = new ShmileConfig()
+config = shmileConfig.config
 
 # TODO: Global :/
 templateControl = new TemplateControl(config.current_template)
@@ -52,7 +53,7 @@ exp.get "/gallery", (req, res) ->
 
 exp.post "/config", urlEncodedParser, (req, res) ->
   console.log(req.body)
-  new_template = config.setTemplate(req.body.currentTemplate)
+  new_template = shmileConfig.setTemplate(req.body.currentTemplate)
   templateControl.setTemplate(new_template)
   res.redirect("/")
 

@@ -17,7 +17,7 @@
   },
   "LandscapeTwoByTwo":{
     "name": "LandscapeTwoByTwo",
-    "overlayImage": "/images/overlay.png",
+    "overlayImage": "/images/LandscapeTwoByTwo.png",
     "photoView": "LandscapeTwoByTwo",
     "compositor": "ImageCompositor",
     "printer": "-d dye -o fit-to-page -o PageSize=w288h432 -o StpLaminate=Matte"
