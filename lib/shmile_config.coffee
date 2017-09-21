@@ -11,7 +11,6 @@ class ShmileConfig
 
   read: ->
     @config = JSON.parse(fs.readFileSync(@opts.configFile, 'utf8'))
-    @templates = JSON.parse(fs.readFileSync(@opts.templatesFile, 'utf8'))
     @currentTemplate = @config.current_template
     @config
 
