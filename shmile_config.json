@@ -1,3 +1,5 @@
 {
-  "current_template": "LandscapeOneByThree"
+  "current_template": "StripOneByThree",
+  "printer_enabled": true,
+  "optional_printing": false
 }
