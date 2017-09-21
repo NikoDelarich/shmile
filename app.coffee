@@ -22,14 +22,14 @@ exp = express()
 web = http.createServer(exp)
 urlEncodedParser = bodyParser.urlencoded({ extended: false })
 
-config = new ShmileConfig()
+config = new ShmileConfig().config
 
 # TODO: Global :/
-templateControl = new TemplateControl(config)
+templateControl = new TemplateControl(config.current_template)
 
-templateControl.setTemplate(config.currentTemplate)
+# templateControl.setTemplate(config.currentTemplate)
 
-console.log("printer is: #{templateControl.printerEnabled}")
+console.log("printer is #{if config.printer_enabled then 'enabled' else 'disabled'} #{if config.optional_printing then ' with optional printing'}")
 
 exp.configure ->
   exp.set "views", __dirname + "/views"
@@ -120,9 +120,9 @@ io.sockets.on "connection", (websocket) ->
     shouldPrintDefer = Q.defer()
     imageCompositedDefer = Q.defer()
 
-    if templateControl.template.printerEnabled
-      console.log "The printer is enabled, showing message"
-      websocket.emit "printer_enabled"
+    if config.printer_enabled
+      console.log "The printer is enabled, optional_printing is #{config.optional_printing}"
+      websocket.emit "printer_enabled", config.optional_printing
     else
       console.log "The printer is NOT enabled, proceeding to 'review_composited'"
       websocket.emit "review_composited"
@@ -135,8 +135,8 @@ io.sockets.on "connection", (websocket) ->
       output_file_path = value[1]
       console.log "Printing image from #{output_file_path}"
       # exec "lpr -o #{process.env.PRINTER_IMAGE_ORIENTATION} -o media=\"#{process.env.PRINTER_MEDIA}\" #{output_file_path}"
-      console.log  "lp #{template.printer} #{output_file_path}"
-      exec "lp #{template.printer} #{output_file_path}"
+      console.log  "lp #{templateControl.template.printer} #{output_file_path}"
+      exec "lp #{templateControl.template.printer} #{output_file_path}"
 
   compositor.on "generated_thumb", (thumb_path) ->
     websocket.broadcast.emit "generated_thumb", PhotoFileUtils.photo_path_to_url(thumb_path)
