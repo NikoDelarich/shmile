@@ -15,10 +15,10 @@ class TemplateControl
     LandscapeTwoByTwo: LandscapeTwoByTwo
     StripOneByThree: StripOneByThree
 
-  constructor:  (shmileConfig) ->
+  constructor:  (templateName) ->
     @availableTemplates = Object.keys(@compositors)
-    @templates = shmileConfig.templates
-    this.setTemplate(shmileConfig.currentTemplate)
+    @templates = Template.getTemplates()
+    this.setTemplate(templateName)
 
   setTemplate: (name) ->
     assert(name in @availableTemplates, "unknown template #{name}")

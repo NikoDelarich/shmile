@@ -1,9 +1,14 @@
 ImageCompositor = require("./image_compositor")
+fs = require('fs')
 
 class Template
 
+  @templates = JSON.parse(fs.readFileSync("templates.json", 'utf8'))
+
   defaults:
+    # FIXME: move out of here
     printerEnabled: false
+    # FIXME: move out of here - kinda, we need to keep the page options
     printer: ""
     overlayImage: ""
     photoView: ""
@@ -18,5 +23,8 @@ class Template
     @photosTotal = options.photosTotal ? @defaults.photosTotal
     @compositor = options.compositor ? @defaults.compositor
 
+
+  @getTemplates: ->
+    @templates
 
 module.exports = Template
