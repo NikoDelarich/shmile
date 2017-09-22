@@ -33,6 +33,8 @@ console.log "currente template = #{shmileConfig.get("current_template")}"
 
 console.log("printer is #{if shmileConfig.get("printer_enabled") then 'enabled' else 'disabled'} #{if shmileConfig.get("optional_printing") then ' with optional printing'}")
 
+io = require("socket.io").listen(web)
+
 exp.configure ->
   exp.set "views", __dirname + "/views"
   exp.set "view engine", "jade"
@@ -59,6 +61,7 @@ exp.post "/config", urlEncodedParser, (req, res) ->
   shmileConfig.config.print_finish = req.body.printFinish
   new_template = shmileConfig.setTemplate(req.body.currentTemplate)
   templateControl.setTemplate(new_template)
+  io.sockets.emit "configsChanged"
   res.redirect("/")
 
 exp.get "/config", (req, res) ->
@@ -76,7 +79,7 @@ camera = new ccKlass().init()
 camera.on "photo_saved", (filename, path, web_url) ->
   templateControl.template.compositor.push path
 
-io = require("socket.io").listen(web)
+
 web.listen 3000
 io.sockets.on "connection", (websocket) ->
   console.log "Web browser connected"
@@ -99,8 +102,6 @@ io.sockets.on "connection", (websocket) ->
 
   websocket.on "snap", () ->
     camera.emit "snap"
-
-  # websocket.on "all_images", ->
 
   shouldPrintDefer = Q.defer();
   imageCompositedDefer = Q.defer()

@@ -19,6 +19,6 @@
     "tests"
   ],
   "dependencies": {
-    "shmile-ui": "dmvicente/shmile-ui#7bd89bb023f6507a5ef3b19960bc9cbec1124513"
+    "shmile-ui": "dmvicente/shmile-ui#4949f989e03589d937891caaa50d431805de5cf7"
   }
 }
