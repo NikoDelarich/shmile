@@ -7,6 +7,7 @@ dotenv = require "dotenv"
 exec = require("child_process").exec
 Q = require 'q'
 bodyParser = require('body-parser')
+fileUpload = require('express-fileupload');
 
 dotenv.load()
 
@@ -34,6 +35,8 @@ console.log "currente template = #{shmileConfig.get("current_template")}"
 console.log("printer is #{if shmileConfig.get("printer_enabled") then 'enabled' else 'disabled'} #{if shmileConfig.get("optional_printing") then ' with optional printing'}")
 
 io = require("socket.io").listen(web)
+
+exp.use(fileUpload());
 
 exp.configure ->
   exp.set "views", __dirname + "/views"
@@ -63,6 +66,23 @@ exp.post "/config", urlEncodedParser, (req, res) ->
   templateControl.setTemplate(new_template)
   io.sockets.emit "configsChanged"
   res.redirect("/")
+
+exp.post "/fileUpload", (req, res) ->
+  # if (!req.files)
+  console.log(req.files)
+  return res.status(400).send('No files were uploaded.') if !req.files
+
+  # The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
+  overlay = req.files.overlay
+
+  # // Use the mv() method to place the file somewhere on your server
+  overlay.mv "public/images/overlays/#{overlay.name}", (err) ->
+  #   # if (err)
+    return res.status(500).send(err) if err
+  #   # res.send('File uploaded!');
+
+  res.redirect('/config');
+
 
 exp.get "/config", (req, res) ->
   res.render "config",

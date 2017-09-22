@@ -33,7 +33,8 @@
     "raspicam": "~0.2.14",
     "moment": "~2.18.1",
     "q": "~1.5.0",
-    "body-parser": "~1.17.2"
+    "body-parser": "~1.17.2",
+    "express-fileupload": "~0.2.0"
   },
   "devDependencies": {
     "bower": "^1.6.8",

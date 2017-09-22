@@ -28,3 +28,12 @@ block content
             option(selected=(config.print_finish == finish),value=finish) #{finish}
 
       button.btn.btn-primary(type=sumit) Save
+
+  div.row
+
+    form(method="post", enctype="multipart\/form-data", action="/fileUpload")
+
+      p Image:
+          input(type="file", name="overlay")
+      p
+          input(type="submit", value="upload")
