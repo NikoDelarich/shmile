@@ -16,6 +16,10 @@ body {
     position: relative;
 }
 
+::-webkit-scrollbar {
+    display: none;
+}
+
 /*
  * Awesome buttons, courtesy of ZURB:
  * http://www.zurb.com/article/266/super-awesome-buttons-with-css3-and-rgba
@@ -29,10 +33,10 @@ button#start-button {
 }
 
 .awesome, .awesome:visited {
-    background: #222 url(/images/alert-overlay.png) repeat-x; 
-    display: inline-block; 
-    padding: 5px 10px 6px; 
-    color: #fff; 
+    background: #222 url(/images/alert-overlay.png) repeat-x;
+    display: inline-block;
+    padding: 5px 10px 6px;
+    color: #fff;
     text-decoration: none;
     border-radius: 0.2em;
     box-shadow:0 1px 3px rgba(0,0,0,0.8);
