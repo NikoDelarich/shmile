@@ -6,23 +6,19 @@ class Template
   @templates = JSON.parse(fs.readFileSync("templates.json", 'utf8'))
 
   defaults:
-    # FIXME: move out of here
-    printerEnabled: false
-    # FIXME: move out of here - kinda, we need to keep the page options
-    printer: ""
+    pageLayout: ""
+    # FIXME: remove this
     overlayImage: ""
     photoView: ""
-    photosTotal: 4
-    compositor: new ImageCompositor()
+    compositor: null
 
   constructor: (options = {}) ->
     @printerEnabled = options.printerEnabled ? @defaults.printerEnabled
-    @printer = options.printer ? @defaults.printer
+    @pageLayout = options.pageLayout ? @defaults.pageLayout
     @overlayImage = options.overlayImage ? @defaults.overlayImage
     @photoView = options.photoView ? @defaults.photoView
     @photosTotal = options.photosTotal ? @defaults.photosTotal
     @compositor = options.compositor ? @defaults.compositor
-
 
   @getTemplates: ->
     @templates

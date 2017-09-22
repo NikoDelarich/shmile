@@ -16,28 +16,19 @@ class TemplateControl
     StripOneByThree: StripOneByThree
 
   constructor:  (templateName) ->
-    @availableTemplates = Object.keys(@compositors)
     @templates = Template.getTemplates()
+    @availableTemplates = Object.keys(@templates)
     this.setTemplate(templateName)
 
   setTemplate: (name) ->
     assert(name in @availableTemplates, "unknown template #{name}")
 
-    # overlay = "/images/#{name}.png"
-
     tt = @templates[name]
-    # c = tt.compositor
 
     @template = new Template({
       overlayImage: tt.overlayImage,
       photoView: tt.photoView,
       compositor: new (this.compositors[name]),
-      printerEnabled: tt.printerEnabled,
-      printer: tt.printer})
-
-    # @printerEnabled = !!@template.printerEnabled
-    # @printer = @template.printer
-    # @compositor = @template.compositor
-    # @overlayImage = @template.overlayImage
+      pageLayout: tt.pageLayout})
 
 module.exports = TemplateControl

@@ -1,5 +1,6 @@
 {
-  "current_template": "PortraitOneByFour",
+  "current_template": "StripOneByThree",
+  "optional_printing": false,
   "printer_enabled": true,
-  "optional_printing": false
+  "print_finish": "Matte"
 }

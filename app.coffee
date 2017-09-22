@@ -23,14 +23,15 @@ web = http.createServer(exp)
 urlEncodedParser = bodyParser.urlencoded({ extended: false })
 
 shmileConfig = new ShmileConfig()
-config = shmileConfig.config
+# config = shmileConfig.config
 
 # TODO: Global :/
-templateControl = new TemplateControl(config.current_template)
+templateControl = new TemplateControl(shmileConfig.get("current_template"))
+# templateControl.setTemplate(shmileConfig.currentTemplate)
 
-# templateControl.setTemplate(config.currentTemplate)
+console.log "currente template = #{shmileConfig.get("current_template")}"
 
-console.log("printer is #{if config.printer_enabled then 'enabled' else 'disabled'} #{if config.optional_printing then ' with optional printing'}")
+console.log("printer is #{if shmileConfig.get("printer_enabled") then 'enabled' else 'disabled'} #{if shmileConfig.get("optional_printing") then ' with optional printing'}")
 
 exp.configure ->
   exp.set "views", __dirname + "/views"
@@ -53,6 +54,9 @@ exp.get "/gallery", (req, res) ->
 
 exp.post "/config", urlEncodedParser, (req, res) ->
   console.log(req.body)
+  shmileConfig.config.printer_enabled = Boolean(req.body.printerEnabled)
+  shmileConfig.config.optional_printing = Boolean(req.body.optionalPrinting)
+  shmileConfig.config.print_finish = req.body.printFinish
   new_template = shmileConfig.setTemplate(req.body.currentTemplate)
   templateControl.setTemplate(new_template)
   res.redirect("/")
@@ -60,15 +64,16 @@ exp.post "/config", urlEncodedParser, (req, res) ->
 exp.get "/config", (req, res) ->
   res.render "config",
     title: "Config"
-    currentTemplate: config.currentTemplate
+    currentTemplate: shmileConfig.currentTemplate
+    config: shmileConfig.config
+    # FIXME: hardcoded - might be acceptable considering there's not many options
+    finishes: ["Matte","Glossy"]
     templates: templateControl.availableTemplates
 
 ccKlass = if process.env['STUB_CAMERA'] is "true" then StubCameraControl else PiCameraControl
 camera = new ccKlass().init()
 
 camera.on "photo_saved", (filename, path, web_url) ->
-  # FIXME:
-  # template.compositor.image_src_list.push path
   templateControl.template.compositor.push path
 
 io = require("socket.io").listen(web)
@@ -121,9 +126,9 @@ io.sockets.on "connection", (websocket) ->
     shouldPrintDefer = Q.defer()
     imageCompositedDefer = Q.defer()
 
-    if config.printer_enabled
-      console.log "The printer is enabled, optional_printing is #{config.optional_printing}"
-      websocket.emit "printer_enabled", config.optional_printing
+    if shmileConfig.get("printer_enabled")
+      console.log "The printer is enabled, optional_printing is #{shmileConfig.get("optional_printing")}"
+      websocket.emit "printer_enabled", shmileConfig.get("optional_printing")
     else
       console.log "The printer is NOT enabled, proceeding to 'review_composited'"
       websocket.emit "review_composited"
@@ -136,8 +141,9 @@ io.sockets.on "connection", (websocket) ->
       output_file_path = value[1]
       console.log "Printing image from #{output_file_path}"
       # exec "lpr -o #{process.env.PRINTER_IMAGE_ORIENTATION} -o media=\"#{process.env.PRINTER_MEDIA}\" #{output_file_path}"
-      console.log  "lp #{templateControl.template.printer} #{output_file_path}"
-      exec "lp #{templateControl.template.printer} #{output_file_path}"
+      printCmd = "#{shmileConfig.defaults.printerCmdLine} #{shmileConfig.defaults.printFinishCmd}#{shmileConfig.get("print_finish")} #{templateControl.template.pageLayout} #{output_file_path}"
+      console.log printCmd
+      exec printCmd
 
   compositor.on "generated_thumb", (thumb_path) ->
     websocket.broadcast.emit "generated_thumb", PhotoFileUtils.photo_path_to_url(thumb_path)
