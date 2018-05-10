@@ -14,7 +14,7 @@ ShmileConfig = require("./lib/shmile_config")
 
 PhotoFileUtils = require("./lib/photo_file_utils")
 StubCameraControl = require("./lib/stub_camera_control")
-PiCameraControl = require("./lib/pi_camera_control")
+CameraControl = require("./lib/camera_control")
 
 TemplateControl = require("./lib/template_control")
 
@@ -73,7 +73,7 @@ exp.get "/config", (req, res) ->
     finishes: ["Matte","Glossy"]
     templates: templateControl.availableTemplates
 
-ccKlass = if process.env['STUB_CAMERA'] is "true" then StubCameraControl else PiCameraControl
+ccKlass = if process.env['STUB_CAMERA'] is "true" then StubCameraControl else CameraControl
 camera = new ccKlass().init()
 
 camera.on "photo_saved", (filename, path, web_url) ->

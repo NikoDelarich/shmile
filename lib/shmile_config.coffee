@@ -5,7 +5,7 @@ class ShmileConfig
     configFile: "shmile_config.json"
     templatesFile: "templates.json"
     # TODO: make configurable
-    printerCmdLine: "lp -d dye -o fit-to-page"
+    printerCmdLine: "lp -o fit-to-page"
     printFinishCmd: "-o StpLaminate="
     printDefaultFinish: "Matte"
 

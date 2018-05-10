@@ -1,6 +1,6 @@
 {
-  "current_template": "StripOneByThree",
-  "optional_printing": false,
+  "current_template": "LandscapeTwoByTwo",
+  "optional_printing": true,
   "printer_enabled": true,
   "print_finish": "Matte"
 }
