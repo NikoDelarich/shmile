@@ -56,8 +56,7 @@ class ImageCompositor
       console.log("executing: convert #{convertArgs.join(" ")}")
 
       try
-        im.convert(
-        convertArgs,
+        im.convert(convertArgs,
         (err, stdout, stderr) ->
           throw err  if err
           emitter.emit "laid_out", OUTPUT_PATH
