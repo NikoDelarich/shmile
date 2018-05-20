@@ -50,19 +50,22 @@ class ImageCompositor
         convertArgs.push @img_src_list[i]
         convertArgs.push "-geometry"
         convertArgs.push GEOMETRIES[i]
-        convertArgs.push "-composite"
+        convertArgs.push "-rotate 180 -composite"
       convertArgs.push OUTPUT_PATH
 
       console.log("executing: convert #{convertArgs.join(" ")}")
 
-      im.convert(
+      try
+        im.convert(
         convertArgs,
         (err, stdout, stderr) ->
           throw err  if err
           emitter.emit "laid_out", OUTPUT_PATH
           # clearImages();
           doCompositing()
-      )
+          )
+      catch error
+        console.log(error)
 
       doCompositing = =>
         compositeArgs = [ "-gravity", "center", "public" + overlay_src, OUTPUT_PATH, "-geometry", TOTAL_WIDTH + "x" + TOTAL_HEIGHT, FINAL_OUTPUT_PATH ]
